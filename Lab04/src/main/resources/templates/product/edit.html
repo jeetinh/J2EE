@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Sửa sản phẩm</title>
+  <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #fdf2f2;
+        }
+        .container {
+            width: 400px;
+            margin: 60px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #c62828;
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 6px 0 4px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .error {
+            color: red;
+            font-size: 13px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #c62828;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            color: #c62828;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Sửa sản phẩm</h2>
+
+  <form th:action="@{/products/edit}" th:object="${product}" method="post">
+    <input type="hidden" th:field="*{id}">
+
+    <label>Tên sản phẩm</label>
+    <input th:field="*{name}">
+    <div class="error" th:errors="*{name}"></div>
+
+    <label>Giá</label>
+    <input type="number" th:field="*{price}">
+    <div class="error" th:errors="*{price}"></div>
+
+    <button>Cập nhật</button>
+  </form>
+
+  <a href="/products">← Quay lại danh sách</a>
+</div>
+
+</body>
+</html>
