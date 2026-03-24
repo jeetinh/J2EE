@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <title>Add Course</title>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            background: #f2f2f2;
+        }
+
+        .box{
+            width: 400px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            margin-top: 50px;
+            border-radius: 8px;
+            box-shadow: 0 0 5px gray;
+        }
+
+        input{
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+        }
+
+        button{
+            padding: 8px 15px;
+            background: blue;
+            color: white;
+            border: none;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+    <h2>Add Course</h2>
+
+    <form th:action="@{/admin/save}"
+          th:object="${course}"
+          method="post">
+
+        Name
+        <input th:field="*{name}">
+
+        Lecturer
+        <input th:field="*{lecturer}">
+
+        Credits
+        <input th:field="*{credits}">
+
+        Image
+        <input th:field="*{image}">
+
+        CategoryId
+        <input th:field="*{categoryId}">
+
+        <button type="submit">
+            Save
+        </button>
+
+    </form>
+
+</div>
+
+</body>
+</html>

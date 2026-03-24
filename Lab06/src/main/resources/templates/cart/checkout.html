@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thông tin đặt hàng</title>
+    <style>
+        body { font-family: Arial; background: #fdf2f2; }
+        .container { width: 500px; margin: 50px auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { color: #c62828; text-align: center; }
+        label { font-weight: bold; }
+        input { width: 100%; padding: 10px; margin: 8px 0 20px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;}
+        button { width: 100%; padding: 12px; background: #28a745; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 16px;}
+        .total { font-size: 18px; color: #c62828; font-weight: bold; margin-bottom: 20px; text-align: center;}
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Điền thông tin nhận hàng</h2>
+    <div class="total">Tổng thanh toán: <span th:text="${totalAmount}"></span> VNĐ</div>
+
+    <form th:action="@{/checkout}" th:object="${order}" method="post">
+        <label>Họ và tên người nhận</label>
+        <input type="text" th:field="*{customerName}" required placeholder="Nguyễn Văn A">
+
+        <label>Số điện thoại</label>
+        <input type="text" th:field="*{phone}" required placeholder="0987654321">
+
+        <label>Địa chỉ giao hàng</label>
+        <input type="text" th:field="*{address}" required placeholder="123 Đường abc, Quận xyz...">
+
+        <button type="submit">Xác nhận Đặt hàng</button>
+    </form>
+</div>
+</body>
+</html>

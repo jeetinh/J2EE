@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <title>Home</title>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            background: #f2f2f2;
+        }
+
+        h2{
+            text-align: center;
+        }
+
+        .container{
+            width: 800px;
+            margin: auto;
+        }
+
+        .course{
+            background: white;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 5px gray;
+        }
+
+        .course p{
+            margin: 5px;
+        }
+
+        .pagination{
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .pagination a{
+            padding: 8px 12px;
+            background: blue;
+            color: white;
+            text-decoration: none;
+            margin: 5px;
+            border-radius: 5px;
+        }
+
+        .pagination a:hover{
+            background: darkblue;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<h2>Course List</h2>
+
+<div class="container">
+
+    <div class="course"
+         th:each="c : ${coursePage.content}">
+
+        <p>
+            Name:
+            <span th:text="${c.name}"></span>
+        </p>
+
+        <p>
+            Lecturer:
+            <span th:text="${c.lecturer}"></span>
+        </p>
+
+        <p>
+            Credits:
+            <span th:text="${c.credits}"></span>
+        </p>
+
+    </div>
+
+
+    <div class="pagination">
+
+        <a th:if="${currentPage > 0}"
+           th:href="@{/home(page=${currentPage-1})}">
+            Prev
+        </a>
+
+        <a th:if="${coursePage.hasNext()}"
+           th:href="@{/home(page=${currentPage+1})}">
+            Next
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

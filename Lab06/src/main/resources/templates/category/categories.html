@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Danh mục</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #fdf2f2; }
+        .container { width: 600px; margin: 50px auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { color: #c62828; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { background: #c62828; color: white; padding: 8px; }
+        td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        .btn { padding: 8px 12px; color: white; text-decoration: none; border-radius: 4px; display: inline-block; }
+        .btn-add { background: #c62828; margin-bottom: 10px; }
+        .btn-nav { background: #6c757d; margin-bottom: 10px; margin-left: 10px;}
+        a.edit { color: #c62828; font-weight: bold; text-decoration: none; margin-right: 10px; }
+        a.delete { color: #999; font-weight: bold; text-decoration: none; }
+        a.delete:hover { color: #c62828; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Danh sách Danh mục</h2>
+
+    <div>
+        <a class="btn btn-add" href="/categories/create" sec:authorize="hasRole('ADMIN')">+ Thêm mới</a>
+        <a class="btn btn-nav" href="/products">Quản lý Sản phẩm</a>
+    </div>
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Tên danh mục</th>
+            <th sec:authorize="hasRole('ADMIN')">Hành động</th>
+        </tr>
+        <tr th:each="c : ${categories}">
+            <td th:text="${c.id}"></td>
+            <td th:text="${c.name}"></td>
+            <td sec:authorize="hasRole('ADMIN')">
+                <a class="edit" th:href="@{/categories/edit/{id}(id=${c.id})}">Sửa</a>
+                <a class="delete" th:href="@{/categories/delete/{id}(id=${c.id})}" onclick="return confirm('Bạn chắc chắn muốn xóa?')">Xóa</a>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

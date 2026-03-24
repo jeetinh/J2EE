@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Danh sách sản phẩm</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --red:        #c0392b;
+      --red-dark:   #96281b;
+      --red-light:  #fdf0ef;
+      --gold:       #c9992c;
+      --ink:        #1a1a1a;
+      --muted:      #6b6b6b;
+      --line:       #e8e2da;
+      --bg:         #f7f4f0;
+      --card:       #ffffff;
+      --blue:       #1a56a0;
+      --green:      #1e7d45;
+      --radius:     10px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      background: var(--ink);
+      color: #d4c9b8;
+      text-align: center;
+      font-size: 12px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 10px 20px;
+    }
+
+    /* ── HEADER ── */
+    .site-header {
+      background: var(--card);
+      border-bottom: 3px solid var(--red);
+      padding: 22px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 20px rgba(0,0,0,.06);
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      color: var(--red);
+      letter-spacing: .02em;
+    }
+    .logo span { color: var(--gold); }
+    .header-meta { font-size: 13px; color: var(--muted); }
+
+    /* ── PAGE WRAPPER ── */
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px 60px;
+    }
+
+    /* ── PAGE TITLE ── */
+    .page-title {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+    .page-title h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      color: var(--ink);
+      line-height: 1;
+    }
+    .page-title .subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .title-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, var(--line), transparent);
+    }
+
+    /* ── TOOLBAR ── */
+    .toolbar {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-form {
+      display: contents;
+    }
+
+    .input-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 200px;
+    }
+    .input-wrap svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
+    .input-wrap input {
+      width: 100%;
+      padding: 10px 12px 10px 36px;
+      border: 1.5px solid var(--line);
+      border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      background: var(--card);
+      color: var(--ink);
+      outline: none;
+      transition: border-color .2s;
+    }
+    .input-wrap input:focus { border-color: var(--red); }
+    .input-wrap input::placeholder { color: #b0a99e; }
+
+    .select-wrap {
+      position: relative;
+      min-width: 180px;
+    }
+    .select-wrap select {
+      width: 100%;
+      padding: 10px 36px 10px 14px;
+      border: 1.5px solid var(--line);
+      border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      background: var(--card);
+      color: var(--ink);
+      appearance: none;
+      outline: none;
+      cursor: pointer;
+      transition: border-color .2s;
+    }
+    .select-wrap select:focus { border-color: var(--red); }
+    .select-wrap::after {
+      content: '▾';
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+      font-size: 12px;
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 18px;
+      border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 13.5px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all .18s ease;
+      white-space: nowrap;
+    }
+    .btn-primary   { background: var(--red);  color: #fff; }
+    .btn-primary:hover   { background: var(--red-dark); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(192,57,43,.35); }
+    .btn-blue      { background: var(--blue); color: #fff; }
+    .btn-blue:hover      { background: #154a87; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(26,86,160,.3); }
+    .btn-green     { background: var(--green); color: #fff; }
+    .btn-green:hover     { background: #175d33; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(30,125,69,.3); }
+    .btn-ghost     { background: transparent; color: var(--muted); border: 1.5px solid var(--line); }
+    .btn-ghost:hover     { background: var(--bg); color: var(--ink); }
+    .btn-sm        { padding: 7px 13px; font-size: 12.5px; }
+
+    /* ── ADMIN ACTIONS ── */
+    .admin-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+      padding: 16px 20px;
+      background: var(--red-light);
+      border: 1px dashed #e8a89e;
+      border-radius: var(--radius);
+    }
+    .admin-badge {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-right: 4px;
+      align-self: center;
+    }
+
+    /* ── TABLE CARD ── */
+    .table-card {
+      background: var(--card);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 28px rgba(0,0,0,.07);
+      border: 1px solid var(--line);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: var(--ink);
+    }
+    th {
+      padding: 15px 18px;
+      text-align: left;
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: #c8c0b4;
+    }
+    th:first-child { padding-left: 24px; }
+    th:last-child  { text-align: center; }
+    th a {
+      color: #e8dfd2;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: color .2s;
+    }
+    th a:hover { color: var(--gold); }
+
+    tbody tr {
+      border-bottom: 1px solid var(--line);
+      transition: background .15s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #faf8f5; }
+
+    td {
+      padding: 14px 18px;
+      vertical-align: middle;
+      font-size: 14px;
+    }
+    td:first-child { padding-left: 24px; }
+
+    .td-id {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    .td-name { font-weight: 600; color: var(--ink); }
+    .td-category {
+      display: inline-block;
+      background: var(--bg);
+      color: var(--muted);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: 12.5px;
+    }
+    .td-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      color: var(--red);
+      font-weight: 700;
+    }
+    .td-price .currency {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      margin-left: 3px;
+      opacity: .7;
+    }
+
+    /* ── ACTION CELL ── */
+    .action-cell { text-align: center; }
+    .cart-form {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .qty-input {
+      width: 54px;
+      padding: 7px 6px;
+      border: 1.5px solid var(--line);
+      border-radius: 7px;
+      text-align: center;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      background: var(--bg);
+      color: var(--ink);
+      outline: none;
+    }
+    .qty-input:focus { border-color: var(--green); }
+
+    .admin-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+    .edit-link   { font-size: 13px; font-weight: 600; color: var(--blue); text-decoration: none; }
+    .edit-link:hover   { text-decoration: underline; }
+    .delete-link { font-size: 13px; font-weight: 600; color: var(--red);  text-decoration: none; }
+    .delete-link:hover { text-decoration: underline; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+    .empty-state svg { opacity: .25; margin-bottom: 16px; }
+    .empty-state p { font-size: 15px; }
+
+    /* ── PAGINATION ── */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 36px;
+    }
+    .pagination a, .pagination .page-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all .18s;
+    }
+    .pagination a {
+      background: var(--card);
+      color: var(--ink);
+      border: 1.5px solid var(--line);
+      box-shadow: 0 1px 4px rgba(0,0,0,.05);
+    }
+    .pagination a:hover {
+      background: var(--red);
+      color: #fff;
+      border-color: var(--red);
+    }
+    .page-info {
+      background: var(--red-light);
+      color: var(--red);
+      border: 1.5px solid #f0b4ac;
+      border-radius: 8px;
+      padding: 9px 18px;
+      font-size: 13.5px;
+      font-weight: 700;
+    }
+    .page-disabled {
+      background: var(--bg);
+      color: #c5beb6;
+      border: 1.5px solid var(--line);
+      border-radius: 8px;
+      padding: 9px 18px;
+      font-size: 13.5px;
+      cursor: not-allowed;
+    }
+
+    /* ── SCROLL ANIMATION ── */
+    tbody tr {
+      animation: rowIn .3s ease both;
+    }
+    @keyframes rowIn {
+      from { opacity: 0; transform: translateX(-8px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    tbody tr:nth-child(1) { animation-delay: .04s }
+    tbody tr:nth-child(2) { animation-delay: .08s }
+    tbody tr:nth-child(3) { animation-delay: .12s }
+    tbody tr:nth-child(4) { animation-delay: .16s }
+    tbody tr:nth-child(5) { animation-delay: .20s }
+    tbody tr:nth-child(6) { animation-delay: .24s }
+    tbody tr:nth-child(7) { animation-delay: .28s }
+    tbody tr:nth-child(8) { animation-delay: .32s }
+    tbody tr:nth-child(9) { animation-delay: .36s }
+    tbody tr:nth-child(10){ animation-delay: .40s }
+
+    @media (max-width: 700px) {
+      .site-header { padding: 16px 20px; }
+      .page { padding: 24px 14px 40px; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      .input-wrap, .select-wrap { min-width: 0; width: 100%; }
+      table { font-size: 13px; }
+      td, th { padding: 10px 12px; }
+      td:first-child, th:first-child { padding-left: 14px; }
+      .td-price { font-size: 14px; }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="topbar">🛒 Chào mừng đến cửa hàng của chúng tôi &nbsp;|&nbsp; Giao hàng toàn quốc</div>
+
+<header class="site-header">
+  <div class="logo">Shop<span>Việt</span></div>
+  <div class="header-meta">Quản lý sản phẩm</div>
+</header>
+
+<div class="page">
+
+  <!-- Tiêu đề -->
+  <div class="page-title">
+    <h1>Sản phẩm</h1>
+    <span class="subtitle">Danh sách</span>
+    <div class="title-line"></div>
+  </div>
+
+  <!-- Thanh lọc -->
+  <div class="toolbar">
+    <form class="filter-form" th:action="@{/products}" method="get">
+      <div class="input-wrap">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm kiếm sản phẩm...">
+      </div>
+
+      <div class="select-wrap">
+        <select name="categoryId">
+          <option value="">Tất cả danh mục</option>
+          <option th:each="c : ${categories}"
+                  th:value="${c.id}"
+                  th:text="${c.name}"
+                  th:selected="${c.id == categoryId}">
+          </option>
+        </select>
+      </div>
+
+      <input type="hidden" name="sort" th:value="${sortField + ',' + sortDir}">
+      <button type="submit" class="btn btn-primary">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+        Lọc
+      </button>
+      <a class="btn btn-ghost" th:href="@{/products}">Bỏ lọc</a>
+    </form>
+  </div>
+
+  <!-- Hành động Admin -->
+  <div class="admin-actions" sec:authorize="hasRole('ADMIN')">
+    <span class="admin-badge">⚙ Admin</span>
+    <a class="btn btn-primary btn-sm" href="/products/create">+ Thêm Sản phẩm</a>
+    <a class="btn btn-blue btn-sm" href="/categories/create">+ Thêm Danh mục</a>
+    <a class="btn btn-ghost btn-sm" href="/categories">Quản lý Danh mục</a>
+  </div>
+
+  <!-- Bảng sản phẩm -->
+  <div class="table-card">
+    <table>
+      <thead>
+      <tr>
+        <th>
+          <a th:href="@{/products(keyword=${keyword}, categoryId=${categoryId}, sort='id,' + (${sortField == 'id'} ? ${reverseSortDir} : 'asc'))}">
+            # ID ↕
+          </a>
+        </th>
+        <th>
+          <a th:href="@{/products(keyword=${keyword}, categoryId=${categoryId}, sort='name,' + (${sortField == 'name'} ? ${reverseSortDir} : 'asc'))}">
+            Tên sản phẩm ↕
+          </a>
+        </th>
+        <th>Danh mục</th>
+        <th>
+          <a th:href="@{/products(keyword=${keyword}, categoryId=${categoryId}, sort='price,' + (${sortField == 'price'} ? ${reverseSortDir} : 'asc'))}">
+            Giá bán ↕
+          </a>
+        </th>
+        <th>Hành động</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="p : ${productPage.content}">
+        <td class="td-id" th:text="'#' + ${p.id}"></td>
+        <td class="td-name" th:text="${p.name}"></td>
+        <td>
+          <span class="td-category" th:text="${p.category != null ? p.category.name : 'Không có'}"></span>
+        </td>
+        <td>
+            <span class="td-price">
+              <span th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')}"></span>
+              <span class="currency">VNĐ</span>
+            </span>
+        </td>
+        <td class="action-cell">
+          <form class="cart-form" th:action="@{/cart/add}" method="post">
+            <input type="hidden" name="id" th:value="${p.id}" />
+            <input type="number" name="quantity" value="1" min="1" class="qty-input">
+            <button type="submit" class="btn btn-green btn-sm">
+              🛒 Giỏ hàng
+            </button>
+          </form>
+          <div class="admin-links" sec:authorize="hasRole('ADMIN')">
+            <a class="edit-link" th:href="@{/products/edit/{id}(id=${p.id})}">✏ Sửa</a>
+            <a class="delete-link" th:href="@{/products/delete/{id}(id=${p.id})}"
+               onclick="return confirm('Bạn chắc chắn muốn xóa sản phẩm này?')">✕ Xóa</a>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Phân trang -->
+  <div class="pagination" th:if="${productPage.totalPages > 0}">
+    <a th:if="${productPage.hasPrevious()}"
+       th:href="@{/products(page=${productPage.number - 1}, keyword=${keyword}, categoryId=${categoryId}, sort=${sortField + ',' + sortDir})}">
+      ← Trang trước
+    </a>
+    <span class="page-disabled" th:unless="${productPage.hasPrevious()}">← Trang trước</span>
+
+    <span class="page-info" th:text="'Trang ' + (${productPage.number + 1}) + ' / ' + ${productPage.totalPages}"></span>
+
+    <a th:if="${productPage.hasNext()}"
+       th:href="@{/products(page=${productPage.number + 1}, keyword=${keyword}, categoryId=${categoryId}, sort=${sortField + ',' + sortDir})}">
+      Trang sau →
+    </a>
+    <span class="page-disabled" th:unless="${productPage.hasNext()}">Trang sau →</span>
+  </div>
+
+</div>
+
+</body>
+</html>

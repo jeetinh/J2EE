@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<h2>My Courses</h2>
+
+<div th:each="e : ${list}">
+
+    CourseId:
+    <span th:text="${e.courseId}"></span>
+
+</div>
+
+<a href="/">Back</a>
+
+</body>
+</html>

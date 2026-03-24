@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm Danh mục</title>
+    <style> /* Bạn có thể copy CSS từ file create.html của Product sang đây cho đồng bộ */
+        body { font-family: Arial, sans-serif; background: #fdf2f2; }
+        .container { width: 400px; margin: 60px auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { color: #c62828; text-align: center; }
+        label { font-weight: bold; }
+        input { width: 100%; padding: 8px; margin: 6px 0 15px; border: 1px solid #ccc; border-radius: 4px; }
+        button { width: 100%; padding: 10px; background: #c62828; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        a { display: block; text-align: center; margin-top: 10px; color: #c62828; text-decoration: none; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Thêm Danh mục</h2>
+    <form th:action="@{/categories/create}" th:object="${category}" method="post">
+        <label>Tên danh mục</label>
+        <input type="text" th:field="*{name}" required>
+        <button type="submit">Lưu</button>
+    </form>
+    <a href="/categories">← Quay lại danh sách</a>
+</div>
+</body>
+</html>
