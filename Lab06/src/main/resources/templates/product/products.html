@@ -517,7 +517,7 @@
             <input type="number" name="quantity" value="1" min="1" class="qty-input">
             <button type="submit" class="btn btn-green btn-sm">
               🛒 Giỏ hàng
-            </button>
+            </button>-->
           </form>
           <div class="admin-links" sec:authorize="hasRole('ADMIN')">
             <a class="edit-link" th:href="@{/products/edit/{id}(id=${p.id})}">✏ Sửa</a>
